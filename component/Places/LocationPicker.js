@@ -5,11 +5,31 @@ import {
   getCurrentPositionAsync,
   useForegroundPermissions,
 } from "expo-location";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 
 const LocationPicker = () => {
   const [pickedLocation, setPickedLocation] = useState();
 
+  const isFocused = useIsFocused();
+  // این ایز فوکوسد وقتی ترو میشود که ما داخل این کامپوننت باشیم برای این قسمت یوز افکت به تنهایی کار آمد نبود و ما از این نیز استفاده کردیم
+
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  useEffect(() => {
+    if (isFocused && route.params) {
+      const mapPickedLocation = {
+        lat: route.params.pickedLat,
+        lng: route.params.pickedLng,
+      };
+      setPickedLocation(mapPickedLocation);
+    }
+  }, [route, isFocused]);
   const verifyPermissions = async () => {
     const [locationPermissionInformation, requestPermission] =
       useForegroundPermissions();
@@ -30,7 +50,6 @@ const LocationPicker = () => {
     }
     return true;
   };
-  // در لوکیشن برای هر دو پلتفورم اجازه گرفتن دستی نیاز است و همان کار های اجازه برای عکس ایفونی که قبلا انجام دادیم را اینبار برای لوکیشن هر دو پلتفورم استفاده میکنیم
 
   const getLocationHandler = async () => {
     const hasPermission = await verifyPermissions();
@@ -43,7 +62,9 @@ const LocationPicker = () => {
       lng: location.coords.longitude,
     });
   };
-  const pickOnMapHandler = () => {};
+  const pickOnMapHandler = () => {
+    navigation.navigate("Map");
+  };
 
   let locationPreview = <Text>No location picked yet</Text>;
 
