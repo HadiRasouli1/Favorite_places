@@ -2,9 +2,11 @@ import { Alert, Image, StyleSheet, Text, View } from "react-native";
 import OutlinedButton from "../UI/OutlinedButton";
 import { Colors } from "../../constants/color";
 import {
+  PermissionStatus,
   getCurrentPositionAsync,
   useForegroundPermissions,
 } from "expo-location";
+import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import {
   useIsFocused,
@@ -12,11 +14,10 @@ import {
   useRoute,
 } from "@react-navigation/native";
 
-const LocationPicker = () => {
+const LocationPicker = ({ onPickeLocation }) => {
   const [pickedLocation, setPickedLocation] = useState();
 
   const isFocused = useIsFocused();
-  // این ایز فوکوسد وقتی ترو میشود که ما داخل این کامپوننت باشیم برای این قسمت یوز افکت به تنهایی کار آمد نبود و ما از این نیز استفاده کردیم
 
   const navigation = useNavigation();
   const route = useRoute();
@@ -30,40 +31,56 @@ const LocationPicker = () => {
       setPickedLocation(mapPickedLocation);
     }
   }, [route, isFocused]);
-  const verifyPermissions = async () => {
-    const [locationPermissionInformation, requestPermission] =
-      useForegroundPermissions();
 
-    if (
-      locationPermissionInformation.status === PermissionStatus.UNDETERMINED
-    ) {
-      const permissionResponse = await requestPermission();
-      return permissionResponse.granted;
-    }
+  useEffect(() => {
+    onPickeLocation(pickedLocation);
+  }, [pickedLocation, onPickeLocation]);
+  // const verifyPermissions = async () => {
+  //   const [locationPermissionInformation, requestPermission] =
+  //     useForegroundPermissions();
 
-    if (locationPermissionInformation.status === PermissionStatus.DENIED) {
-      Alert.alert(
-        "Insufficient Permissioms!",
-        "You need to grant location permissions to use this app"
-      );
-      return false;
-    }
-    return true;
-  };
+  //   if (
+  //     locationPermissionInformation.status === PermissionStatus.UNDETERMINED
+  //   ) {
+  //     const permissionResponse = await requestPermission();
+  //     return permissionResponse.granted;
+  //   }
+
+  //   if (locationPermissionInformation.status === PermissionStatus.DENIED) {
+  //     Alert.alert(
+  //       "Insufficient Permissioms!",
+  //       "You need to grant location permissions to use this app"
+  //     );
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
   const getLocationHandler = async () => {
-    const hasPermission = await verifyPermissions();
-    if (!hasPermission) {
+    // const hasPermission = await verifyPermissions();
+    // if (!hasPermission) {
+    //   return;
+    // }
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "error masage for access",
+        "Permission to access location was denied"
+      );
       return;
     }
+    //یک راه حل ساده تر برای پیاده سازی مجوز گرفتن از اندروید و ای او اس فقط باید دو تا مقدار را در اپ دات جیسون اضافه بکنیم
     const location = await getCurrentPositionAsync();
     setPickedLocation({
       lat: location.coords.latitude,
       lng: location.coords.longitude,
     });
+
+    return location;
   };
-  const pickOnMapHandler = () => {
-    navigation.navigate("Map");
+  const pickOnMapHandler = async () => {
+    const UserLocation = await getLocationHandler();
+    navigation.navigate("Map", { UserLocation: UserLocation });
   };
 
   let locationPreview = <Text>No location picked yet</Text>;

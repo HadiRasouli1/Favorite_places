@@ -2,12 +2,14 @@ import { useCallback, useLayoutEffect, useState } from "react";
 import { Alert, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import IconBytton from "../component/UI/IconBytton";
+import { useRoute } from "@react-navigation/native";
 
-const Map = ({ navigation }) => {
+const Map = ({ navigation, route }) => {
   const [selectedLocation, setSelectedLoacation] = useState();
+
   const region = {
-    latitude: 37.78,
-    longitude: -122.43,
+    latitude: route.params.UserLocation.coords.latitude,
+    longitude: route.params.UserLocation.coords.longitude,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
@@ -54,7 +56,6 @@ const Map = ({ navigation }) => {
       initialRegion={region}
       onPress={selectLocationHandler}
     >
-      {/* مپ ویو که نصب کردیم و در اینجا استفاده کردیم یک اینشیال ولیو میگیرد تا وقتی باز شد محل مورد نظرمان را بدهد و یک فانکشن ان پرس میگیرد که در ان فانکشنی میتوانیم داده هایی ازین مپ که هر کجایش را پرس کردیم دریافت کنیم */}
       {selectedLocation && (
         <Marker
           title="Picked Location"
@@ -63,7 +64,6 @@ const Map = ({ navigation }) => {
             longitude: selectedLocation.lng,
           }}
         />
-        //میتوانیم ازین مارکر که از همان پکیج نصب شده بالایی ایمپورت شده استفاده کنیم فقط باید از ان مختصاتی که در فانکشن مپ ویو با هر پرس به دست اوردیم در کوردنیت این مارکر استفاده کنیم
       )}
     </MapView>
   );
