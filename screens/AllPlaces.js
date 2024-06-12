@@ -8,11 +8,16 @@ const AllPlaces = ({ route }) => {
 
   useEffect(() => {
     if (isFocused && route.params) {
-      setLoadedPlaces((curPlaces) => [...curPlaces, route.params.place]);
+      if (route.params.checkAddPlace) {
+        setLoadedPlaces((curPlaces) => [...curPlaces, route.params.place]);
+        route.params.checkAddPlace = false;
+      } else {
+        setLoadedPlaces(loadedPlaces);
+      }
     }
   }, [isFocused, route]);
 
-  return <PlacesList plases={loadedPlaces} />;
+  return <PlacesList places={loadedPlaces} />;
 };
 
 export default AllPlaces;

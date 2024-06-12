@@ -69,7 +69,6 @@ const LocationPicker = ({ onPickeLocation }) => {
       );
       return;
     }
-    //یک راه حل ساده تر برای پیاده سازی مجوز گرفتن از اندروید و ای او اس فقط باید دو تا مقدار را در اپ دات جیسون اضافه بکنیم
     const location = await getCurrentPositionAsync();
     setPickedLocation({
       lat: location.coords.latitude,
