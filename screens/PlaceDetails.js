@@ -11,7 +11,7 @@ import {
 import OutlinedButton from "../component/UI/OutlinedButton";
 import { Colors } from "../constants/color";
 
-const PlaceDetails = () => {
+const PlaceDetails = ({ navigation }) => {
   const route = useRoute();
 
   const [placeInfo, setPlaceInfo] = useState({});
@@ -26,6 +26,13 @@ const PlaceDetails = () => {
 
   const showOnMapHandler = () => {
     console.log(placeInfo);
+    const UserLocation = {
+      coords: {
+        latitude: placeInfo[0].location.lat,
+        longitude: placeInfo[0].location.lng,
+      },
+    };
+    navigation.navigate("Map", { UserLocation: UserLocation });
   };
   if (!placeInfo) {
     return <ActivityIndicator size="large" color="white" />;
