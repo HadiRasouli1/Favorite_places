@@ -23,9 +23,11 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
-      ]
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.firstapp.published"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,7 +39,11 @@
           "cameraPermission": "The app needs access to your camera in order to take photo for favorite places"
         }
       ]
-      
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "44d83dee-8830-400d-8dd2-a4466005a39d"
+      }
+    }
   }
 }
